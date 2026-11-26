@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-labelledby="title desc">
+<title id="title">Stratum — путь экологического измерения</title>
+<desc id="desc">API сохраняет задания. Worker читает исходные данные, проверяет ревизии и атомарно записывает результат, курсор и карантин. Панель получает состояние по API.</desc>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#407166"/></marker>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#18372e} .title{font-size:37px;font-weight:700}
+    .subtitle{font-size:18px;fill:#466358}.section{font-size:17px;fill:#44655a;font-weight:700}
+    .label{font-size:22px;font-weight:700}.body{font-size:17px;fill:#38564b}.mono{font-family:Menlo,Consolas,monospace;font-size:15px;fill:#324f47}
+    .box{fill:white;stroke:#c4d6cc;stroke-width:1.5}.arrow{fill:none;stroke:#407166;stroke-width:2.4;marker-end:url(#arrow)}
+  </style>
+</defs>
+<rect width="1200" height="720" rx="20" fill="#f4f7f2"/>
+<text x="48" y="66" class="title">Stratum</text><text x="48" y="102" class="subtitle">Как измерение попадает из источника в панель инженера</text>
+<text x="48" y="170" class="section">Приём задания</text>
+<rect class="box" x="48" y="190" width="288" height="100" rx="12"/>
+<text x="68" y="227" class="label">Панель или устройство</text>
+<text x="68" y="259" class="body">Сессия или ключ источника</text>
+<path class="arrow" d="M336 240H405"/>
+<rect class="box" x="412" y="190" width="276" height="100" rx="12"/>
+<text x="432" y="227" class="label">FastAPI</text><text x="432" y="259" class="body">Проверяет права клиента</text>
+<path class="arrow" d="M688 240H757"/>
+<rect class="box" x="764" y="190" width="388" height="100" rx="12"/>
+<text x="784" y="227" class="label">Очередь SQLite</text><text x="784" y="259" class="body">Задание сохранено → HTTP 202</text>
+<path class="arrow" d="M957 290V348"/>
+<text x="48" y="337" class="section">Обработка данных</text>
+<rect class="box" x="48" y="357" width="288" height="102" rx="12"/>
+<text x="68" y="395" class="label">CSV · SQLite · REST</text><text x="68" y="428" class="body">Снимок или страница с seq</text>
+<path class="arrow" d="M336 408H757"/>
+<text x="402" y="397" class="mono">данные текущего пакета</text>
+<rect x="764" y="357" width="388" height="102" rx="12" fill="#174f40"/>
+<text x="784" y="395" class="label" style="fill:white">Worker</text><text x="784" y="428" class="body" style="fill:#e0f0e6">Проверяет единицы, время и ревизию</text>
+<path class="arrow" d="M957 459V502"/>
+<text x="48" y="498" class="section">Одна транзакция на пакет</text>
+<rect x="48" y="512" width="1104" height="110" rx="12" fill="#deebe1" stroke="#b9cfc1"/>
+<path d="M417 532V602M762 532V602" stroke="#b6cbbe" stroke-width="1.5"/>
+<text x="68" y="554" class="label">История и текущее</text><text x="68" y="586" class="mono">versions + heads</text>
+<text x="439" y="554" class="label">Карантин строк</text><text x="439" y="586" class="mono">rejects + raw</text>
+<text x="784" y="554" class="label">Итог и позиция чтения</text><text x="784" y="586" class="mono">jobs + sources.cursor</text>
+<text x="48" y="677" class="body">Панель читает статус через GET /v1/runs/{jid}, а текущие измерения через GET /v1/readings.</text>
+</svg>

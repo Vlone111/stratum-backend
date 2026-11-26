@@ -1,0 +1,2041 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Stratum • экологические измерения",
+    "description": "Приём, нормализация и история ревизий промышленных экологических измерений.",
+    "contact": {
+      "name": "Евгений Славкин • backend"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "service"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/session": {
+      "post": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Login",
+        "operationId": "login_v1_session_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Тело запроса превышает 1 МиБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_v1_session_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/me": {
+      "get": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Whoami",
+        "operationId": "whoami_v1_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/bindings": {
+      "get": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Bindings",
+        "operationId": "bindings_v1_bindings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Binding"
+                  },
+                  "type": "array",
+                  "title": "Response Bindings V1 Bindings Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нужна роль editor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/sources": {
+      "get": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Sources",
+        "operationId": "sources_v1_sources_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Source"
+                  },
+                  "title": "Response Sources V1 Sources Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Create Source",
+        "operationId": "create_source_v1_sources_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нужна роль editor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Тело запроса превышает 1 МиБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/{sid}": {
+      "patch": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Update Source",
+        "operationId": "update_source_v1_sources__sid__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нужна роль editor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект отсутствует в рабочем пространстве",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Тело запроса превышает 1 МиБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/{sid}/runs": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Start",
+        "operationId": "start_v1_sources__sid__runs_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sid"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobRef"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нужна роль editor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект отсутствует в рабочем пространстве",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Операция недоступна",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Тело запроса превышает 1 МиБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/{sid}/key": {
+      "post": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Rotate",
+        "operationId": "rotate_v1_sources__sid__key_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HookKey"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нужна роль editor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект отсутствует в рабочем пространстве",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Операция недоступна",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Тело запроса превышает 1 МиБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/hooks/{sid}": {
+      "post": {
+        "tags": [
+          "ingress"
+        ],
+        "summary": "Receive",
+        "operationId": "receive_v1_hooks__sid__post",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventBatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobRef"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Операция недоступна",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Тело запроса превышает 1 МиБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Runs",
+        "operationId": "runs_v1_runs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "source_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "queued",
+                    "running",
+                    "succeeded",
+                    "partial",
+                    "failed"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Job"
+                  },
+                  "title": "Response Runs V1 Runs Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs/{jid}": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Run Detail",
+        "operationId": "run_detail_v1_runs__jid__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "jid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Jid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект отсутствует в рабочем пространстве",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs/{jid}/rejects": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Rejects",
+        "operationId": "rejects_v1_runs__jid__rejects_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "jid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Jid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rejection"
+                  },
+                  "title": "Response Rejects V1 Runs  Jid  Rejects Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект отсутствует в рабочем пространстве",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/runs/{jid}/retry": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Retry",
+        "operationId": "retry_v1_runs__jid__retry_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "jid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Jid"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobRef"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Нужна роль editor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект отсутствует в рабочем пространстве",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Операция недоступна",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Тело запроса превышает 1 МиБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/readings": {
+      "get": {
+        "tags": [
+          "measurements"
+        ],
+        "summary": "Readings",
+        "operationId": "readings_v1_readings_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "source_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source Id"
+            }
+          },
+          {
+            "name": "station",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Station"
+            }
+          },
+          {
+            "name": "metric",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Metric"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Until"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reading"
+                  },
+                  "title": "Response Readings V1 Readings Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/{sid}/events/{event_id}/versions": {
+      "get": {
+        "tags": [
+          "measurements"
+        ],
+        "summary": "Versions",
+        "operationId": "versions_v1_sources__sid__events__event_id__versions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sid"
+            }
+          },
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Event Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reading"
+                  },
+                  "title": "Response Versions V1 Sources  Sid  Events  Event Id  Versions Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект отсутствует в рабочем пространстве",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/overview": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Overview",
+        "operationId": "overview_v1_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Overview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Требуется действующая сессия, пароль или ключ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неверные параметры или тело запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ApiError"
+      },
+      "Binding": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "csv",
+              "sqlite",
+              "rest",
+              "webhook"
+            ],
+            "title": "Kind"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "kind"
+        ],
+        "title": "Binding"
+      },
+      "EventBatch": {
+        "properties": {
+          "events": {
+            "items": {},
+            "type": "array",
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Events",
+            "description": "До 500 строк. Worker проверяет каждую отдельно и сохраняет брак в карантин.",
+            "examples": [
+              [
+                {
+                  "event_id": "sample-12",
+                  "metric": "pm10",
+                  "observed_at": "2026-11-01T08:00:00Z",
+                  "revision": 1,
+                  "station": "north",
+                  "unit": "mg/m3",
+                  "value": 0.023
+                }
+              ]
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "events"
+        ],
+        "title": "EventBatch"
+      },
+      "Health": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "Health"
+      },
+      "HookKey": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "title": "HookKey"
+      },
+      "Identity": {
+        "properties": {
+          "workspace": {
+            "type": "string",
+            "title": "Workspace"
+          },
+          "login": {
+            "type": "string",
+            "title": "Login"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "editor",
+              "viewer"
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workspace",
+          "login",
+          "role"
+        ],
+        "title": "Identity"
+      },
+      "Job": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "cause": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "schedule",
+              "webhook",
+              "continuation",
+              "retry"
+            ],
+            "title": "Cause"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "succeeded",
+              "partial",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "attempt": {
+            "type": "integer",
+            "title": "Attempt"
+          },
+          "created": {
+            "type": "integer",
+            "title": "Created"
+          },
+          "finished": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished"
+          },
+          "received": {
+            "type": "integer",
+            "title": "Received"
+          },
+          "applied": {
+            "type": "integer",
+            "title": "Applied"
+          },
+          "skipped": {
+            "type": "integer",
+            "title": "Skipped"
+          },
+          "rejected": {
+            "type": "integer",
+            "title": "Rejected"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "source_id",
+          "cause",
+          "status",
+          "attempt",
+          "created",
+          "received",
+          "applied",
+          "skipped",
+          "rejected"
+        ],
+        "title": "Job"
+      },
+      "JobRef": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id"
+        ],
+        "title": "JobRef"
+      },
+      "Login": {
+        "properties": {
+          "workspace": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Workspace"
+          },
+          "login": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Login"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "format": "password",
+            "title": "Password",
+            "writeOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "workspace",
+          "login",
+          "password"
+        ],
+        "title": "Login"
+      },
+      "NewSource": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "csv",
+              "sqlite",
+              "rest",
+              "webhook"
+            ],
+            "title": "Kind"
+          },
+          "binding": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Binding"
+          },
+          "interval_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 604800.0,
+                "minimum": 10.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Seconds"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "kind"
+        ],
+        "title": "NewSource"
+      },
+      "Overview": {
+        "properties": {
+          "sources": {
+            "type": "integer",
+            "title": "Sources"
+          },
+          "current_readings": {
+            "type": "integer",
+            "title": "Current Readings"
+          },
+          "queued": {
+            "type": "integer",
+            "title": "Queued"
+          },
+          "running": {
+            "type": "integer",
+            "title": "Running"
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed"
+          },
+          "rejected_rows": {
+            "type": "integer",
+            "title": "Rejected Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sources",
+          "current_readings",
+          "queued",
+          "running",
+          "failed",
+          "rejected_rows"
+        ],
+        "title": "Overview"
+      },
+      "Reading": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "station": {
+            "type": "string",
+            "title": "Station"
+          },
+          "metric": {
+            "type": "string",
+            "title": "Metric"
+          },
+          "observed_at": {
+            "type": "string",
+            "title": "Observed At"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_id",
+          "event_id",
+          "revision",
+          "station",
+          "metric",
+          "observed_at",
+          "value",
+          "unit",
+          "job_id"
+        ],
+        "title": "Reading"
+      },
+      "Rejection": {
+        "properties": {
+          "row_number": {
+            "type": "integer",
+            "title": "Row Number"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "raw": {
+            "title": "Raw"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row_number",
+          "reason",
+          "raw"
+        ],
+        "title": "Rejection"
+      },
+      "Session": {
+        "properties": {
+          "workspace": {
+            "type": "string",
+            "title": "Workspace"
+          },
+          "login": {
+            "type": "string",
+            "title": "Login"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "editor",
+              "viewer"
+            ],
+            "title": "Role"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "expires": {
+            "type": "integer",
+            "title": "Expires"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workspace",
+          "login",
+          "role",
+          "access_token",
+          "expires"
+        ],
+        "title": "Session"
+      },
+      "Source": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "csv",
+              "sqlite",
+              "rest",
+              "webhook"
+            ],
+            "title": "Kind"
+          },
+          "binding": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Binding"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "interval_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Seconds"
+          },
+          "next_at": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next At"
+          },
+          "cursor": {
+            "type": "integer",
+            "title": "Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "enabled",
+          "cursor"
+        ],
+        "title": "Source"
+      },
+      "SourceUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "interval_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 604800.0,
+                "minimum": 10.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Seconds"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SourceUpdate"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "APIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Source-Key"
+      }
+    }
+  }
+}

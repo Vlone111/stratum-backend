@@ -1,0 +1,7 @@
+{
+  "ural": {
+    "lab-export": {"kind": "csv", "path": "/data/inbox/laboratory.csv"},
+    "archive": {"kind": "sqlite", "path": "/data/inbox/archive.sqlite3"},
+    "network": {"kind": "rest", "url": "https://provider.example/readings", "token_env": "NETWORK_API_TOKEN"}
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "events": [
+    {"event_id":"mobile-07","revision":1,"station":"east","metric":"noise","value":58.5,"unit":"dBA","observed_at":"2026-10-14T08:30:00+05:00"}
+  ]
+}

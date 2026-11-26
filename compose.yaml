@@ -1,0 +1,16 @@
+services:
+  api:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - stratum-data:/data
+    restart: unless-stopped
+  worker:
+    build: .
+    command: ["python", "-m", "stratum.worker"]
+    volumes:
+      - stratum-data:/data
+    restart: unless-stopped
+volumes:
+  stratum-data:
